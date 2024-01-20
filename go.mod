@@ -1,4 +1,4 @@
-module kratos-tool
+module github.com/lizuoqiang/kratos-tool
 
 go 1.20
 
