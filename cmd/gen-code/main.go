@@ -143,15 +143,16 @@ func parseSQL(sql string) map[string][]map[string]string {
 	})
 
 	result := make(map[string][]map[string]string)
-	for _, table := range tableArr {
+	for k, tableStr := range tableArr {
+		fmt.Printf("table %d, %+v \n", k+1, tableStr)
 		// Parse table name
 		tableNamePattern := regexp.MustCompile("`([^`]+)`\\s*\\(")
-		tableNameMatch := tableNamePattern.FindStringSubmatch(table)
+		tableNameMatch := tableNamePattern.FindStringSubmatch(tableStr)
 
 		// Parse field name
-		table = tableNamePattern.ReplaceAllString(table, "")
+		table := tableNamePattern.ReplaceAllString(tableStr, "")
 		fieldPattern := regexp.MustCompile("`(\\w+)`\\s+(\\w+).*COMMENT\\s*'(.+)'")
-		fieldMatches := fieldPattern.FindAllStringSubmatch(table, -1)
+		fieldMatches := fieldPattern.FindAllStringSubmatch(tableStr, -1)
 
 		if len(tableNameMatch) < 2 || len(fieldMatches) == 0 {
 			fmt.Println("Failed to parse table structure, sql:", table)

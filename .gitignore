@@ -1,3 +1,11 @@
 # Develop tools
 .vscode/
 .idea/
+
+cmd/gen-code/dao/
+cmd/gen-code/model/
+cmd/gen-code/biz/
+cmd/gen-code/protobuf/
+cmd/gen-code/gen-code
+
+sql.txt
