@@ -8,4 +8,9 @@ cmd/gen-code/biz/
 cmd/gen-code/protobuf/
 cmd/gen-code/gen-code
 
+dao/
+model/
+biz/
+protobuf/
+
 sql.txt
