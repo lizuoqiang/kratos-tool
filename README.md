@@ -1,10 +1,10 @@
-# h1 Install
+# Install
 
 ```
 go install github.com/lizuoqiang/kratos-tool/cmd/gen-code@latest
 ```
 
-# h1 Usage
+# Usage
 
 ```
 cat /tmp/sql.txt
