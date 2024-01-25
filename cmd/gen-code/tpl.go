@@ -227,23 +227,23 @@ func ({{model_name}}) TableName() string {
 }`
 
 const ProtobufTpl = `service Demo {
-    rpc {{module_name}}Add ({{module_name}}AddRequest) returns ({{module_name}}AddReply) {
+    rpc {{module_name}}Create ({{module_name}}CreateRequest) returns ({{module_name}}CreateReply) {
         option (google.api.http) = {
-            post: "/{{route_prefix}}/add",
+            post: "/{{route_prefix}}/create",
             body: "*"
         };
     }
 
-    rpc {{module_name}}Del ({{module_name}}DelRequest) returns ({{module_name}}DelReply) {
+    rpc {{module_name}}Delete ({{module_name}}DeleteRequest) returns ({{module_name}}DeleteReply) {
         option (google.api.http) = {
-            post: "/{{route_prefix}}/del",
+            post: "/{{route_prefix}}/delete",
             body: "*"
         };
     }
 
-    rpc {{module_name}}Save ({{module_name}}SaveRequest) returns ({{module_name}}SaveReply) {
+    rpc {{module_name}}Update ({{module_name}}UpdateRequest) returns ({{module_name}}UpdateReply) {
         option (google.api.http) = {
-            post: "/{{route_prefix}}/save",
+            post: "/{{route_prefix}}/update",
             body: "*"
         };
     }
@@ -261,25 +261,25 @@ const ProtobufTpl = `service Demo {
     }
 }
 
-message {{module_name}}AddRequest {
+message {{module_name}}CreateRequest {
 {{fields_exclude_id}}
 }
 
-message {{module_name}}AddReply {
+message {{module_name}}CreateReply {
 {{fields}}
 }
 
-message {{module_name}}DelRequest {
+message {{module_name}}DeleteRequest {
   int32 id = 1;
 }
 
-message {{module_name}}DelReply {}
+message {{module_name}}DeleteReply {}
 
-message {{module_name}}SaveRequest {
+message {{module_name}}UpdateRequest {
 {{fields}}
 }
 
-message {{module_name}}SaveReply {
+message {{module_name}}UpdateReply {
 {{fields}}
 }
 
@@ -304,6 +304,51 @@ message {{module_name}}ListReply {
   }
   repeated {{module_name}} list = 2;
 }`
+
+const ServiceTpl = `package service
+
+import (
+	"context"
+	"time"
+)
+
+func (s *DemoService) {{model_name}}Create(ctx context.Context, req *pb.{{model_name}}CreateRequest) (*pb.{{model_name}}CreateReply, error) {
+	return &pb.{{model_name}}CreateReply{}, nil
+}
+func (s *DemoService) {{model_name}}Delete(ctx context.Context, req *pb.{{model_name}}DeleteRequest) (*pb.{{model_name}}DeleteReply, error) {
+	return &pb.{{model_name}}DeleteReply{}, nil
+}
+func (s *DemoService) {{model_name}}Update(ctx context.Context, req *pb.{{model_name}}UpdateRequest) (*pb.{{model_name}}UpdateReply, error) {
+	return &pb.{{model_name}}UpdateReply{}, nil
+}
+func (s *DemoService) {{model_name}}Detail(ctx context.Context, req *pb.{{model_name}}DetailRequest) (*pb.{{model_name}}DetailReply, error) {
+	return &pb.{{model_name}}DetailReply{}, nil
+}
+func (s *DemoService) {{model_name}}List(ctx context.Context, req *pb.{{model_name}}ListRequest) (*pb.{{model_name}}ListReply, error) {
+	data := &biz.{{model_name}}Search{
+		Page: int(req.Page),
+		Size: int(req.Size),
+	}
+
+	list, total, err := s.business.List(ctx, data)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*pb.{{model_name}}ListReply_{{model_name}}, len(list))
+	for k, v := range list {
+		result = append(result, &pb.{{model_name}}ListReply_{{model_name}}{
+	
+		})
+	}
+
+	return &pb.{{model_name}}ListReply{
+		Total: int64(total),
+		List:  result,
+	}, nil
+}
+
+`
 
 func genDao(tableName string, convertFields, convertExcludeIDFields, listWhere []string) string {
 	replace := map[string]string{
