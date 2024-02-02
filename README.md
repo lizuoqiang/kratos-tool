@@ -21,12 +21,13 @@ CREATE TABLE `whitelist` (
     PRIMARY KEY (`id`)
 ) COMMENT='白名单表';
 
-gen-code /tmp/sql.txt dao,model,biz,protobuf
+gen-code /tmp/sql.txt data,model,biz,protobuf,service
 
 output:
 生成文件： /tmp/biz/whitelist.go
 生成文件： /tmp/model/whitelist.go
-生成文件： /tmp/dao/whitelist.go
+生成文件： /tmp/data/whitelist.go
 生成文件： /tmp/protobuf/whitelist.proto
+生成文件： /tmp/service/whitelist.go
 
 ```
