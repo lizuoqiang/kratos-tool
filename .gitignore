@@ -12,5 +12,6 @@ dao/
 model/
 biz/
 protobuf/
+service/
 
 sql.txt

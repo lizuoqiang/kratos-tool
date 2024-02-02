@@ -67,6 +67,14 @@ func (c *{{model_name}}Business) {{model_name}}Create(ctx context.Context, data 
 	return create, nil
 }
 
+func (c *{{model_name}}Business) {{model_name}}Detail(ctx context.Context, id int) (*{{model_name}}, error) {
+	detail, err := c.{{model_name}}Dao.GetById(ctx, id, []string{}, []string{})
+	if err != nil {
+		return nil, err
+	}
+	return detail, nil
+}
+
 func (c *{{model_name}}Business) {{model_name}}Delete(ctx context.Context, id int) error {
 	err := c.{{model_name}}Dao.DeleteById(ctx, id)
 	return err
@@ -79,7 +87,7 @@ func (c *{{model_name}}Business) {{model_name}}Update(ctx context.Context, id in
 	return err
 }`
 
-const DaoTpl = `package dao
+const DaoTpl = `package data
 
 type {{model_name}}Dao struct {
 	data *Data
@@ -313,16 +321,36 @@ import (
 )
 
 func (s *DemoService) {{model_name}}Create(ctx context.Context, req *pb.{{model_name}}CreateRequest) (*pb.{{model_name}}CreateReply, error) {
+	data := &biz.{{model_name}}{}
+	_, err := s.{{lower_case_model_name}}Business.{{model_name}}Create(ctx, data)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.{{model_name}}CreateReply{}, nil
 }
 func (s *DemoService) {{model_name}}Delete(ctx context.Context, req *pb.{{model_name}}DeleteRequest) (*pb.{{model_name}}DeleteReply, error) {
+	err := s.{{lower_case_model_name}}Business.{{model_name}}Delete(ctx, int(req.Id))
+	if err != nil {
+		return nil, err
+	}
 	return &pb.{{model_name}}DeleteReply{}, nil
 }
 func (s *DemoService) {{model_name}}Update(ctx context.Context, req *pb.{{model_name}}UpdateRequest) (*pb.{{model_name}}UpdateReply, error) {
+	data := &biz.{{model_name}}{}
+	err := s.{{lower_case_model_name}}Business.{{model_name}}Update(ctx, int(req.Id), data)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.{{model_name}}UpdateReply{}, nil
 }
 func (s *DemoService) {{model_name}}Detail(ctx context.Context, req *pb.{{model_name}}DetailRequest) (*pb.{{model_name}}DetailReply, error) {
-	return &pb.{{model_name}}DetailReply{}, nil
+	detail, err := s.{{lower_case_model_name}}Business.{{model_name}}Detail(ctx, int(req.Id))
+	if err != nil {
+		return nil, err
+	}
+	return &pb.{{model_name}}DetailReply{
+		Id: int32(detail.Id),
+	}, nil
 }
 func (s *DemoService) {{model_name}}List(ctx context.Context, req *pb.{{model_name}}ListRequest) (*pb.{{model_name}}ListReply, error) {
 	data := &biz.{{model_name}}Search{
@@ -330,20 +358,20 @@ func (s *DemoService) {{model_name}}List(ctx context.Context, req *pb.{{model_na
 		Size: int(req.Size),
 	}
 
-	list, total, err := s.business.List(ctx, data)
+	list, total, err := s.business.{{model_name}}List(ctx, data)
 	if err != nil {
 		return nil, err
 	}
 
 	result := make([]*pb.{{model_name}}ListReply_{{model_name}}, len(list))
 	for k, v := range list {
-		result = append(result, &pb.{{model_name}}ListReply_{{model_name}}{
-	
-		})
+		result[k] = &pb.{{model_name}}ListReply_{{model_name}}{
+			Id: int32(v.Id),
+		}
 	}
 
 	return &pb.{{model_name}}ListReply{
-		Total: int64(total),
+		Total: int32(total),
 		List:  result,
 	}, nil
 }
@@ -388,4 +416,14 @@ func genProtobuf(tableName string, protoFields, protoFieldsExcludeID []string) s
 	}
 
 	return replaceStrings(ProtobufTpl, replace)
+}
+
+func genService(tableName string) string {
+	temp := strings.Title(tableName)
+	replace := map[string]string{
+		"{{model_name}}":            temp,
+		"{{lower_case_model_name}}": strings.ToLower(temp[:1]) + temp[1:],
+	}
+
+	return replaceStrings(ServiceTpl, replace)
 }

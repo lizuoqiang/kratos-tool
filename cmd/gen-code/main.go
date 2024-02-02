@@ -34,7 +34,7 @@ func generateProtobuf(cmd *cobra.Command, args []string) {
 		}
 	}
 	if len(modules) == 0 {
-		modules = append(modules, []string{"dao", "model", "biz", "protobuf"}...)
+		modules = append(modules, []string{"dao", "model", "biz", "protobuf", "service"}...)
 	}
 
 	if ok, _ := FileExists(sqlPath); !ok {
@@ -62,7 +62,7 @@ func generateProtobuf(cmd *cobra.Command, args []string) {
 				excludeFieldDef := fmt.Sprintf("   %s %s = %d;",
 					sqlToProtoType(item["type"]),
 					item["key"],
-					excludeIdIndex,
+					excludeIdIndex+1,
 				)
 				protoFieldsExcludeId = append(protoFieldsExcludeId, excludeFieldDef)
 				excludeIdIndex++
@@ -120,6 +120,7 @@ func generateProtobuf(cmd *cobra.Command, args []string) {
 		bizData := genBiz(tableName, bizStruct)
 		daoData := genDao(tableName, convertFields, convertExcludeIdFields, listWhere)
 		protobufData := genProtobuf(tableName, protoFields, protoFieldsExcludeId)
+		serviceData := genService(tableName)
 
 		if inSlice("biz", modules) {
 			GenFile(GetOutputPath("biz/"+tableName+".go"), bizData, 0755)
@@ -132,6 +133,9 @@ func generateProtobuf(cmd *cobra.Command, args []string) {
 		}
 		if inSlice("protobuf", modules) {
 			GenFile(GetOutputPath("protobuf/"+tableName+".proto"), protobufData, 0755)
+		}
+		if inSlice("service", modules) {
+			GenFile(GetOutputPath("service/"+tableName+".go"), serviceData, 0755)
 		}
 	}
 }
