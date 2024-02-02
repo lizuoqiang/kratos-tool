@@ -128,8 +128,8 @@ func generateProtobuf(cmd *cobra.Command, args []string) {
 		if inSlice("model", modules) {
 			GenFile(GetOutputPath("model/"+tableName+".go"), modelData, 0755)
 		}
-		if inSlice("dao", modules) {
-			GenFile(GetOutputPath("dao/"+tableName+".go"), daoData, 0755)
+		if inSlice("data", modules) {
+			GenFile(GetOutputPath("data/"+tableName+".go"), daoData, 0755)
 		}
 		if inSlice("protobuf", modules) {
 			GenFile(GetOutputPath("protobuf/"+tableName+".proto"), protobufData, 0755)
