@@ -358,7 +358,7 @@ func (s *DemoService) {{model_name}}List(ctx context.Context, req *pb.{{model_na
 		Size: int(req.Size),
 	}
 
-	list, total, err := s.business.{{model_name}}List(ctx, data)
+	list, total, err := s.{{lower_case_model_name}}Business.{{model_name}}List(ctx, data)
 	if err != nil {
 		return nil, err
 	}
