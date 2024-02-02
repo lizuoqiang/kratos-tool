@@ -89,6 +89,14 @@ func (c *{{model_name}}Business) {{model_name}}Update(ctx context.Context, id in
 
 const DaoTpl = `package data
 
+import (
+	"fmt"
+	"context"
+	"errors"
+	"github.com/go-kratos/kratos/v2/log"
+	"gorm.io/gorm"
+)
+
 type {{model_name}}Dao struct {
 	data *Data
 	log  *log.Helper
