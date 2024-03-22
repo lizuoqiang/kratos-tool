@@ -388,7 +388,7 @@ func (s *DemoService) {{model_name}}List(ctx context.Context, req *pb.{{model_na
 
 func genDao(tableName string, convertFields, convertExcludeIDFields, listWhere []string) string {
 	replace := map[string]string{
-		"{{model_name}}":                strings.Title(tableName),
+		"{{model_name}}":                toCamelCase(tableName),
 		"{{convert_fields}}":            strings.Join(convertFields, ",\n"),
 		"{{convert_exclude_id_fields}}": strings.Join(convertExcludeIDFields, "\n"),
 		"{{list_where}}":                strings.Join(listWhere, "\n"),
@@ -399,7 +399,7 @@ func genDao(tableName string, convertFields, convertExcludeIDFields, listWhere [
 
 func genBiz(tableName string, bizStruct []string) string {
 	replace := map[string]string{
-		"{{model_name}}": strings.Title(tableName),
+		"{{model_name}}": toCamelCase(tableName),
 		"{{biz_field}}":  strings.Join(bizStruct, "\n"),
 	}
 
@@ -408,7 +408,8 @@ func genBiz(tableName string, bizStruct []string) string {
 
 func genModel(tableName string, sqlStruct []string) string {
 	replace := map[string]string{
-		"{{model_name}}": strings.Title(tableName),
+		"{{table_name}}": tableName,
+		"{{model_name}}": toCamelCase(tableName),
 		"{{gorm_field}}": strings.Join(sqlStruct, "\n"),
 	}
 
@@ -418,7 +419,7 @@ func genModel(tableName string, sqlStruct []string) string {
 func genProtobuf(tableName string, protoFields, protoFieldsExcludeID []string) string {
 	replace := map[string]string{
 		"{{route_prefix}}":      strings.ReplaceAll(tableName, "_", "-"),
-		"{{module_name}}":       strings.Title(tableName),
+		"{{module_name}}":       toCamelCase(tableName),
 		"{{fields_exclude_id}}": strings.Join(protoFieldsExcludeID, "\n"),
 		"{{fields}}":            strings.Join(protoFields, "\n"),
 	}
@@ -427,7 +428,7 @@ func genProtobuf(tableName string, protoFields, protoFieldsExcludeID []string) s
 }
 
 func genService(tableName string) string {
-	temp := strings.Title(tableName)
+	temp := toCamelCase(tableName)
 	replace := map[string]string{
 		"{{model_name}}":            temp,
 		"{{lower_case_model_name}}": strings.ToLower(temp[:1]) + temp[1:],
