@@ -34,7 +34,7 @@ func generateProtobuf(cmd *cobra.Command, args []string) {
 		}
 	}
 	if len(modules) == 0 {
-		modules = append(modules, []string{"dao", "model", "biz", "protobuf", "service"}...)
+		modules = append(modules, []string{"data", "model", "biz", "protobuf", "service"}...)
 	}
 
 	if ok, _ := FileExists(sqlPath); !ok {
