@@ -146,10 +146,6 @@ func (dao *{{model_name}}Dao) GetById(ctx context.Context, id int, fields []stri
 	}
 
 	err := query.First(mod, id).Error
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
-	}
 	if err != nil {
 		return nil, err
 	}
