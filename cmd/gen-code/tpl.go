@@ -167,9 +167,6 @@ func (dao *{{model_name}}Dao) GetByIds(ctx context.Context, ids []int, fields []
     }
 
     err := query.Find(&models, ids).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
-	}
 	if err != nil {
 		return nil, err
 	}
@@ -185,10 +182,7 @@ func (dao *{{model_name}}Dao) GetByKeyAndValue(ctx context.Context, key string, 
 	mod := &model.{{model_name}}{}
 	err := dao.data.DB(ctx).Where(fmt.Sprintf("%s =?", key), value).First(mod).Error
 
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
-	}
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound){
 		return nil, err
 	}
 
